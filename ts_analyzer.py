@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from __future__ import print_function
 from colorprint import *
 
@@ -16,6 +18,9 @@ import struct
 import pprint
 from sys import stdout
 import datetime
+import ts_analyzer
+
+import argparse
 
 def handle_signal(sig, frame):
     tornado.ioloop.IOLoop.instance().add_callback(tornado.ioloop.IOLoop.instance().stop)
@@ -93,9 +98,15 @@ application = tornado.web.Application([
 
 
 if __name__ == "__main__":
-    os.system( [ 'clear', 'cls' ][ os.name == 'nt' ] )
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--version', action='version', version="ts_analyzer %s" % ts_analyzer.__version__ )
 
-    print ("PyUV version %s" % pyuv.__version__,color='white',background='blue')
+    args = parser.parse_args()
+    
+    os.system( [ 'clear', 'cls' ][ os.name == 'nt' ] )
+    
+    print ("TS_Analyzer version %s (Using PyUV version %s)" % (ts_analyzer.__version__,pyuv.__version__),color='white',background='blue')
     template_path=os.path.join(os.path.dirname(__file__), "templates")
 
     pids = {}
