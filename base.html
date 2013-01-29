@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <title>{% block title %}Default title{% end %}</title>
+  </head>
+  <body>
+      {% for address,values in pids_new.items() %}
+        {% set s=0 %}
+        <div style="float:left"><ul>
+        {% block address %}
+          <li>{{ escape(address) }}<br>
+          {% if isinstance(values, dict) %}
+                {% set total=0 %}
+                {% for pids,stats in values.items() %}
+                    {% set total=total+stats['packets'] %}
+                {% end %}
+                {% for pids,stats in sorted(values.items(), key=lambda x: x[1]['packets']) %}
+                    {% if s==0 %}
+                        {% set s=1 %}
+                        Source IP: {{stats['ip']}}</li><ul>
+                    {% end %}
+                    {% set pct=(stats['packets']/total)*100 %}
+                    <li><div style='width:100%; 
+background: -moz-linear-gradient(left, #1c8e22 0%, #1c8e22 {{pct-10}}%, #ffffff {{pct}}%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, right top, color-stop(0%,#1c8e22), color-stop({{pct-10}}%,#1c8e22), color-stop({{pct}}%,#ffffff)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(left, #1c8e22 0%,#1c8e22 {{pct-10}}%,#ffffff {{pct}}%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(left, #1c8e22 0%,#1c8e22 68%,#ffffff 68%); /* Opera 11.10+ */
+background: -ms-linear-gradient(left, #1c8e22 0%,#1c8e22 68%,#ffffff 68%); /* IE10+ */
+background: linear-gradient(to right, #1c8e22 0%,#1c8e22 68%,#ffffff 68%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1c8e22', endColorstr='#ffffff',GradientType=1 ); /* IE6-9 */
+border-radius: 2px;
+                                '>
+                        PID: {{hex(pids)}} Packets [188 bytes] : {{stats['packets']}} Discontinuities: {{stats['error']}}</div></li>
+                {% end %}
+                </ul>
+          {% end %}
+        {% end %}
+        </ul></div>
+      {% end %}
+  </body>
+</html>

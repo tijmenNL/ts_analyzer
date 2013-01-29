@@ -1,0 +1,14 @@
+<html>
+  <head>
+    <title>{% block title %}Default title{% end %}</title>
+  </head>
+  <body>
+    <ul>
+      {% for address in pids_new %}
+        {% block address %}
+          <li>{{ escape(adress.pid) }}</li>
+        {% end %}
+      {% end %}
+    </ul>
+  </body>
+</html>
