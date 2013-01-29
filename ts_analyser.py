@@ -9,7 +9,6 @@ import signal
 import tornado.ioloop
 import tornado.web
 
-
 import os
 import sys
 import pyuv
@@ -57,25 +56,15 @@ def on_read(handle, ip_port, data, error):
                     pids[mcast]={}
                 if pid not in pids[mcast]:
                     pids[mcast][pid]={'packets':1,'cc':cc, 'error':0, 'ip':ip}
-                    print("==> Found new PID %s from %s (%s)" % (hex(pid),mcast,ip))
+                    print ("==> Found new PID %s from %s (%s)" % (hex(pid),mcast,ip))
                 else:
                     pids[mcast][pid]['packets']= pids[mcast][pid]['packets']+1
-                    #if 1:
                     if adaptation_field != 2:
                         cc_com=(pids[mcast][pid]['cc']+1) % 16
                         pids[mcast][pid]['cc']=cc
-                        #if pid == 2401: 
-                         #   print((transport_error, payload_unit_start,
-                          #      transport_priority, hex(pid), scrambling,
-   #                             have_adaptation_field, have_payload,
-    #                            cc, adaptation_field))
                         if cc is not cc_com:
-                            #print((transport_error, payload_unit_start,
-                            #   transport_priority, hex(pid), scrambling,
-                            #  have_adaptation_field, have_payload,
-                            #  cc))
                             pids[mcast][pid]['error'] = pids[mcast][pid]['error']+1
-                            print("%s Error expected %s got %s (%s) %s %s" %
+                            print ("%s Error expected %s got %s (%s) %s %s" %
                                     (datetime.datetime.now(),cc_com,cc,mcast,hex(pid),length),
                                     color='red')
 
@@ -92,14 +81,7 @@ class MainHandler(tornado.web.RequestHandler):
                     except:
                         pass
             del pids_new[key]
-        #loader = template.Loader("./")
         self.render('base.html',pids_new=pids_new)
-        #loader.load(base.html).generate(pids="pids_new"))
-        #self.write(pids_new)
-        #self.set_header("Content-Type","application/html")
-        #for item in pids:
-        #print("item")
-            #self.write(item)
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(pids)
 
@@ -113,10 +95,9 @@ if __name__ == "__main__":
 
     print ("PyUV version %s" % pyuv.__version__,color='white',background='blue')
     template_path=os.path.join(os.path.dirname(__file__), "templates")
-    #loop = pyuv.Loop.default_loop()
-    #async = pyuv.Async(loop, async_exit)
 
     pids = {}
+    
     signal.signal(signal.SIGINT, handle_signal)
     signal.signal(signal.SIGTERM, handle_signal)
     application.listen(8889)
