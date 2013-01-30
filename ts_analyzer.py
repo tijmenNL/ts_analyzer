@@ -35,11 +35,15 @@ def on_read(handle, ip_port, data, error):
     if error is not None:
         print (error,color='red')
         return
+    start_time_packet=datetime.datetime.now()
     data = data.strip()
     mcast=handle.getsockname()
     if data:
         ip, port = ip_port
-        bits_second=1+bits_second
+        if (datetime.datetime.now()-start_time_packet.seconds()) >= '30':
+            bits_second=0
+        else:
+            bits_second=1+bits_second
         for i in range(0,len(data),188):
             offset =+ i
             #print(offset)
@@ -82,7 +86,7 @@ class MainHandler(tornado.web.RequestHandler):
         from platform import uname
         hostname = uname()[1]
         run_time = datetime.datetime.now() - start_time
-        bits=bits_second*1316/run_time.total_seconds()
+        bits=(bits_second*1316/run_time.total_seconds())/1000000
         self.render('index.html',version=ts_analyzer.__version__,addresses=dict(addresses), hostname=hostname, bits=bits, run_time=run_time)
 
 
