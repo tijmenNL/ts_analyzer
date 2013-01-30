@@ -40,7 +40,7 @@ def on_read(handle, ip_port, data, error):
     mcast=handle.getsockname()
     if data:
         ip, port = ip_port
-        if (datetime.datetime.now()-start_time_packet.seconds()) >= '30':
+        if ((datetime.datetime.now()-start_time_packet).seconds()) >= '30':
             bits_second=0
         else:
             bits_second=1+bits_second
