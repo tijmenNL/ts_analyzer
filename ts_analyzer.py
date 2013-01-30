@@ -77,6 +77,11 @@ def on_read(handle, ip_port, data, error):
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
+        self.render('index.html',version=ts_analyzer.__version__)
+
+
+class ChannelHandler(tornado.web.RequestHandler):
+    def get(self):
         pids_new=pids.copy()
         for key in pids_new.keys():
             if type(key) is not str:
@@ -91,13 +96,12 @@ class MainHandler(tornado.web.RequestHandler):
         self.render('base.html',pids_new=pids_new)
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(pids)
-
-application = tornado.web.Application([
-    (r"/", MainHandler),
-])
-
-
 if __name__ == "__main__":
+    
+    application = tornado.web.Application([
+        (r"/", MainHandler),
+        (r"/channels/(.*)", ChannelHandler)
+    ])
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', action='version', version="ts_analyzer %s" % ts_analyzer.__version__ )
