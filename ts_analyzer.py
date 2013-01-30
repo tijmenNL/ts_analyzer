@@ -40,8 +40,8 @@ def on_read(handle, ip_port, data, error):
     mcast=handle.getsockname()
     if data:
         ip, port = ip_port
-        if (round((datetime.datetime.now()-start_time_packet).seconds())) >= '30':
-            bits_second=0
+        if (datetime.datetime.now()-start_time_packet).total_seconds()) >= '30':
+            bits_second=1
         else:
             bits_second=1+bits_second
         for i in range(0,len(data),188):
