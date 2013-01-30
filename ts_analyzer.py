@@ -31,6 +31,7 @@ else:
     LINESEP = os.linesep
 
 def on_read(handle, ip_port, data, error):
+    global bits_second
     if error is not None:
         print (error,color='red')
         return
