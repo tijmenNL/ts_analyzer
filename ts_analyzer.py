@@ -35,13 +35,16 @@ def on_read(handle, ip_port, data, error):
     if error is not None:
         print (error,color='red')
         return
-    start_time_packet=datetime.datetime.now()
+    if start_time_packet == 'unset':
+        start_time_packet=datetime.datetime.now()
     data = data.strip()
     mcast=handle.getsockname()
     if data:
         ip, port = ip_port
-        if (datetime.datetime.now()-start_time_packet).total_seconds()) >= '30':
+        diff = datetime.datetime.now()-start_time_packet
+        if diff.total_seconds() >= '30':
             bits_second=1
+            start_time_packet=datetime.datetime.now()
         else:
             bits_second=1+bits_second
         for i in range(0,len(data),188):
@@ -86,8 +89,9 @@ class MainHandler(tornado.web.RequestHandler):
         from platform import uname
         hostname = uname()[1]
         run_time = datetime.datetime.now() - start_time
-        bits=(bits_second*1316/run_time.total_seconds())/1000000
-        self.render('index.html',version=ts_analyzer.__version__,addresses=dict(addresses), hostname=hostname, bits=bits, run_time=run_time)
+        packet_time = datetime.datetime.now() - start_time_packet
+        bits=((bits_second*1316)*8/packet_time.total_seconds())/1000000
+        self.render('index.html',version=ts_analyzer.__version__,addresses=dict(addresses),hostname=hostname, bits=round(bits,2), run_time=run_time)
 
 
 class ChannelHandler(tornado.web.RequestHandler):
@@ -145,7 +149,7 @@ if __name__ == "__main__":
     addresses = {}
     addresses[("239.192.80.1", 1234)] = 1
     
-    start_time_packet=0
+    start_time_packet='unset'
     bits_second = 1
     start_time=datetime.datetime.now()
     pp2 = pprint.PrettyPrinter(indent=4)
@@ -165,6 +169,11 @@ if __name__ == "__main__":
     server5.bind(("239.192.49.2", 1234))
     server5.set_membership("239.192.49.2", pyuv.UV_JOIN_GROUP)
     server5.start_recv(on_read)
+
+    server4 = pyuv.UDP(loop._loop)
+    server4.bind(("239.192.72.1", 1234))
+    server4.set_membership("239.192.72.1", pyuv.UV_JOIN_GROUP)
+    server4.start_recv(on_read)
 
     server6 = pyuv.UDP(loop._loop)
     server6.bind(("239.192.3.41", 1234))
