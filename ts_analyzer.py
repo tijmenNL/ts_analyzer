@@ -77,7 +77,7 @@ def on_read(handle, ip_port, data, error):
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        pids_new=pids.copy()
+        pids_new=pids.copy():
         for key in pids_new.keys():
             if type(key) is not str:
                 try:
@@ -110,6 +110,11 @@ if __name__ == "__main__":
     template_path=os.path.join(os.path.dirname(__file__), "templates")
 
     pids = {}
+    
+    addresses = {("239.192.80.1", 1234),("239.192.49.2", 1234)}
+    
+    pp2 = pprint.PrettyPrinter(indent=4)
+    pp2.pprint(addresses)
     
     signal.signal(signal.SIGINT, handle_signal)
     signal.signal(signal.SIGTERM, handle_signal)
