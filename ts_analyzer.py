@@ -93,7 +93,7 @@ class ChannelHandler(tornado.web.RequestHandler):
                     except:
                         pass
             del pids_new[key]
-        self.render(pids_new)
+        self.write(pids_new)
 
 class ChannelOverviewHandler(tornado.web.RequestHandler):
     def get(self):
