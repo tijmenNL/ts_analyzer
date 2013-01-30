@@ -77,7 +77,9 @@ def on_read(handle, ip_port, data, error):
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render('index.html',version=ts_analyzer.__version__,addresses=dict(addresses))
+        from platform import uname
+        hostname = uname()[1]
+        self.render('index.html',version=ts_analyzer.__version__,addresses=dict(addresses), hostname=hostname)
 
 
 class ChannelHandler(tornado.web.RequestHandler):
