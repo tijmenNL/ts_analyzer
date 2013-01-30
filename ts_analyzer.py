@@ -116,7 +116,7 @@ if __name__ == "__main__":
     
     application = tornado.web.Application([
         (r"/", MainHandler),
-        (r"/channels/overview", ChannelOverviewHandler)
+        (r"/channels/overview", ChannelOverviewHandler),
         (r"/channels", ChannelHandler)
     ])
     
