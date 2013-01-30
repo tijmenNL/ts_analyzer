@@ -77,7 +77,7 @@ def on_read(handle, ip_port, data, error):
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        pids_new=pids.copy():
+        pids_new=pids.copy()
         for key in pids_new.keys():
             if type(key) is not str:
                 try:
