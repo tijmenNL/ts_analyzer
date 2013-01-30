@@ -1,15 +1,21 @@
 <html>
-  <head>
-    <title>{% block title %}TS Analyser{% end %}</title>
-  </head>
-  <body>
-      <h1>TS analyzer</h1>
-      <p>This is the TS analyser version {{version}} running on HOST<br>
-          I am monitoring:</p>
+    <head>
+        <title>{% block title %}TS Analyser{% end %}</title>
+    </head>
+<body>
+    <h1>TS analyzer</h1>
+          <p>
+              This is the TS analyser version {{version}} running on HOST<br>
+              I am monitoring:
+          </p>
           <ul>
               {% for address,values in addresses.items() %}
-                <li>{{address}}</li>
+                  <li>{{address}}</li>
               {% end %}
           </ul>
+          <p>
+              Here is an <a href='channels/overiew'>overview</a>
+          </p>
+              
   </body>
 </html>
