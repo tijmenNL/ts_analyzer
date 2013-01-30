@@ -93,14 +93,30 @@ class ChannelHandler(tornado.web.RequestHandler):
                     except:
                         pass
             del pids_new[key]
+        self.render(pids_new)
+
+class ChannelOverviewHandler(tornado.web.RequestHandler):
+    def get(self):
+        pids_new=pids.copy()
+        for key in pids_new.keys():
+            if type(key) is not str:
+                try:
+                    pids_new[str(key)] = pids_new[key]
+                except:
+                    try:
+                        pids_new[repr(key)] == pids_new[key]
+                    except:
+                        pass
+            del pids_new[key]
         self.render('base.html',pids_new=pids_new)
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(pids)
-        
+            
 if __name__ == "__main__":
     
     application = tornado.web.Application([
         (r"/", MainHandler),
+        (r"/channels/overview", ChannelOverviewHandler)
         (r"/channels", ChannelHandler)
     ])
     
