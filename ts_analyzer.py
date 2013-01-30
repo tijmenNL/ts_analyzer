@@ -111,7 +111,8 @@ if __name__ == "__main__":
 
     pids = {}
     
-    addresses = {("239.192.80.1", 1234),("239.192.49.2", 1234)}
+    addresses = {}
+    addresses[("239.192.80.1", 1234)] = 1
     
     pp2 = pprint.PrettyPrinter(indent=4)
     pp2.pprint(addresses)
