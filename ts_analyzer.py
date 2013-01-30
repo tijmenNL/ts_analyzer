@@ -82,7 +82,7 @@ class MainHandler(tornado.web.RequestHandler):
         from platform import uname
         hostname = uname()[1]
         run_time = datetime.datetime.now() - start_time
-        self.render('index.html',version=ts_analyzer.__version__,addresses=dict(addresses), hostname=hostname, bits=bits_second)
+        self.render('index.html',version=ts_analyzer.__version__,addresses=dict(addresses), hostname=hostname, bits=bits_second, run_time=run_time)
 
 
 class ChannelHandler(tornado.web.RequestHandler):
