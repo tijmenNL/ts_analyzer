@@ -38,7 +38,7 @@ def on_read(handle, ip_port, data, error):
     mcast=handle.getsockname()
     if data:
         ip, port = ip_port
-        bits_second=bits_second+1
+        bits_second=1+bits_second
         for i in range(0,len(data),188):
             offset =+ i
             #print(offset)
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     addresses = {}
     addresses[("239.192.80.1", 1234)] = 1
     
-    bits_second = 0
+    bits_second = 1
     start_time=datetime.datetime.now()
     pp2 = pprint.PrettyPrinter(indent=4)
     pp2.pprint(addresses)
