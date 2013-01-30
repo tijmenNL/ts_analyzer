@@ -96,11 +96,12 @@ class ChannelHandler(tornado.web.RequestHandler):
         self.render('base.html',pids_new=pids_new)
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(pids)
+        
 if __name__ == "__main__":
     
     application = tornado.web.Application([
         (r"/", MainHandler),
-        (r"/channels/(.*)", ChannelHandler)
+        (r"/channels(.*)", ChannelHandler)
     ])
     
     parser = argparse.ArgumentParser()
