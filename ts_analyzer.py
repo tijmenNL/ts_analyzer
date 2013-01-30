@@ -31,7 +31,7 @@ else:
     LINESEP = os.linesep
 
 def on_read(handle, ip_port, data, error):
-    global bits_second
+    global bits_second, start_time_packet
     if error is not None:
         print (error,color='red')
         return
@@ -145,6 +145,7 @@ if __name__ == "__main__":
     addresses = {}
     addresses[("239.192.80.1", 1234)] = 1
     
+    start_time_packet=0
     bits_second = 1
     start_time=datetime.datetime.now()
     pp2 = pprint.PrettyPrinter(indent=4)
