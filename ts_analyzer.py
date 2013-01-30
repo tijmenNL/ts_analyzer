@@ -101,7 +101,7 @@ if __name__ == "__main__":
     
     application = tornado.web.Application([
         (r"/", MainHandler),
-        (r"/channels(.*)", ChannelHandler)
+        (r"/channels", ChannelHandler)
     ])
     
     parser = argparse.ArgumentParser()
