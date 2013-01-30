@@ -38,6 +38,7 @@ def on_read(handle, ip_port, data, error):
     mcast=handle.getsockname()
     if data:
         ip, port = ip_port
+        bits_second=bits_second+1
         for i in range(0,len(data),188):
             offset =+ i
             #print(offset)
@@ -79,7 +80,8 @@ class MainHandler(tornado.web.RequestHandler):
     def get(self):
         from platform import uname
         hostname = uname()[1]
-        self.render('index.html',version=ts_analyzer.__version__,addresses=dict(addresses), hostname=hostname)
+        run_time = datetime.datetime.now() - start_time
+        self.render('index.html',version=ts_analyzer.__version__,addresses=dict(addresses), hostname=hostname, bits=bits_second)
 
 
 class ChannelHandler(tornado.web.RequestHandler):
@@ -137,6 +139,8 @@ if __name__ == "__main__":
     addresses = {}
     addresses[("239.192.80.1", 1234)] = 1
     
+    bits_second = 0
+    start_time=datetime.datetime.now()
     pp2 = pprint.PrettyPrinter(indent=4)
     pp2.pprint(addresses)
     
