@@ -123,15 +123,22 @@ class ChannelOverviewHandler(tornado.web.RequestHandler):
                         pass
             del pids_new[key]
         self.render('base.html',pids_new=pids_new)
+        #pp = pprint.PrettyPrinter(indent=4)
+        #pp.pprint(pids)
+
+class NewChannelHandler(tornado.web.RequestHandler):
+    def post(self):
+        # Debug
         pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(pids)
-            
+        pp.pprint(self)
+
 if __name__ == "__main__":
     
     application = tornado.web.Application([
         (r"/", MainHandler),
         (r"/channels/overview", ChannelOverviewHandler),
-        (r"/channels", ChannelHandler)
+        (r"/channels", ChannelHandler),
+        (r"/channels/new", NewChannelHandler)
     ])
     
     parser = argparse.ArgumentParser()
@@ -152,8 +159,8 @@ if __name__ == "__main__":
     start_time_packet='unset'
     bits_second = 1
     start_time=datetime.datetime.now()
-    pp2 = pprint.PrettyPrinter(indent=4)
-    pp2.pprint(addresses)
+    #pp2 = pprint.PrettyPrinter(indent=4)
+    #pp2.pprint(addresses)
     
     signal.signal(signal.SIGINT, handle_signal)
     signal.signal(signal.SIGTERM, handle_signal)
