@@ -129,8 +129,14 @@ class ChannelOverviewHandler(tornado.web.RequestHandler):
 class NewChannelHandler(tornado.web.RequestHandler):
     def post(self):
         # Debug
+        #self.write(tornado.escape.json_encode(self.request.arguments["post"]))
+        try:
+            posted_config=tornado.escape.json_decode(self.request.body)
+        except:
+            print("Invalid JSON")
+
         pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(self)
+        pp.pprint(posted_config)
 
 if __name__ == "__main__":
     
@@ -168,29 +174,44 @@ if __name__ == "__main__":
     loop = tornado.ioloop.IOLoop.instance()
 
     server = pyuv.UDP(loop._loop)
-    server.bind(("239.192.80.1", 1234))
-    server.set_membership("239.192.80.1", pyuv.UV_JOIN_GROUP)
+    server.bind(("239.192.71.3", 1234))
+    server.set_membership("239.192.71.3", pyuv.UV_JOIN_GROUP)
     server.start_recv(on_read)
 
-    server5 = pyuv.UDP(loop._loop)
-    server5.bind(("239.192.49.2", 1234))
-    server5.set_membership("239.192.49.2", pyuv.UV_JOIN_GROUP)
-    server5.start_recv(on_read)
+    server1 = pyuv.UDP(loop._loop)
+    server1.bind(("239.192.27.1", 1234))
+    server1.set_membership("239.192.27.1", pyuv.UV_JOIN_GROUP)
+    server1.start_recv(on_read)
+    
+#    server2 = pyuv.UDP(loop._loop)
+#    server2.bind(("239.192.27.2", 1234))
+#    server2.set_membership("239.192.27.2", pyuv.UV_JOIN_GROUP)
+#    server2.start_recv(on_read)
+    
+#    server3 = pyuv.UDP(loop._loop)
+#    server3.bind(("239.192.27.1", 1234))
+#    server3.set_membership("239.192.27.1", pyuv.UV_JOIN_GROUP)
+#    server3.start_recv(on_read)
+    
+#    server5 = pyuv.UDP(loop._loop)
+#    server5.bind(("239.192.49.2", 1234))
+#    server5.set_membership("239.192.49.2", pyuv.UV_JOIN_GROUP)
+#    server5.start_recv(on_read)
 
-    server4 = pyuv.UDP(loop._loop)
-    server4.bind(("239.192.72.1", 1234))
-    server4.set_membership("239.192.72.1", pyuv.UV_JOIN_GROUP)
-    server4.start_recv(on_read)
+#    server4 = pyuv.UDP(loop._loop)
+#    server4.bind(("239.192.72.1", 1234))
+#    server4.set_membership("239.192.72.1", pyuv.UV_JOIN_GROUP)
+#    server4.start_recv(on_read)
 
-    server6 = pyuv.UDP(loop._loop)
-    server6.bind(("239.192.3.41", 1234))
-    server6.set_membership("239.192.3.41", pyuv.UV_JOIN_GROUP)
-    server6.start_recv(on_read)
+#    server6 = pyuv.UDP(loop._loop)
+#    server6.bind(("239.192.23.2", 1234))
+#    server6.set_membership("239.192.23.2", pyuv.UV_JOIN_GROUP)
+#    server6.start_recv(on_read)
 
-    server7 = pyuv.UDP(loop._loop)
-    server7.bind(("239.192.72.3", 1234))
-    server7.set_membership("239.192.72.3", pyuv.UV_JOIN_GROUP)
-    server7.start_recv(on_read)
+#    server7 = pyuv.UDP(loop._loop)
+#    server7.bind(("239.192.25.2", 1234))
+#    server7.set_membership("239.192.25.2", pyuv.UV_JOIN_GROUP)
+#    server7.start_recv(on_read)
 
 
     loop.start()
