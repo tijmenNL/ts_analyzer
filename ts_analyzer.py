@@ -164,7 +164,7 @@ if __name__ == "__main__":
     print ("TS_Analyzer version %s (Using PyUV version %s)" % (ts_analyzer.__version__,pyuv.__version__),color='white',background='blue')
     template_path=os.path.join(os.path.dirname(__file__), "templates")
 
-    pids = {}
+    syslog.syslog("TS_Analyzer version %s (Using PyUV version %s)" % (ts_analyzer.__version__,pyuv.__version__))
 
     addresses = {}
     addresses[("239.192.80.1", 1234)] = 1
