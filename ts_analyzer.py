@@ -91,7 +91,7 @@ def on_read(handle, ip_port, flags, data, error):
                             syslog.syslog(syslog.LOG_ERR, "%s Error expected %s got %s (%s) %s %s" %
                                     (datetime.datetime.now(),cc_com,cc,mcast,hex(pid),length))
 
-class MainHandler(tornado.web.RequestHandler):ß
+class MainHandler(tornado.web.RequestHandler):
     def get(self):
         from platform import uname
         hostname = uname()[1]
