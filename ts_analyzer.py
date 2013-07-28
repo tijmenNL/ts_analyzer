@@ -77,7 +77,12 @@ def on_read(handle, ip_port, flags, data, error):
                     pids[mcast]={}
                 if pid not in pids[mcast]:
                     pids[mcast][pid]={'packets':1,'cc':cc, 'error':0, 'ip':ip}
-                    print ("==> Found new PID %s from %s (%s)" % (hex(pid),mcast,ip))
+                    print ("===> Found new PID in stream %s (src=%s) (PID: " %
+                            (mcast,ip),end='')
+                    print ("%s"% hex(pid), color='green',end='')
+                    print (" [%s])"% pid)
+                    buf.append("%s Found new PID in stream %s (src=%s) (PID: %s [%s])" %
+                            (datetime.datetime.now(),mcast,ip,hex(pid),pid))
                 else:
                     pids[mcast][pid]['packets']= pids[mcast][pid]['packets']+1
                     if adaptation_field != 2:
@@ -86,11 +91,13 @@ def on_read(handle, ip_port, flags, data, error):
                         if cc is not cc_com:
                             pids[mcast][pid]['error'] = pids[mcast][pid]['error']+1
                             print ("%s Error expected %s got %s (%s) %s %s" %
-                                    (datetime.datetime.now(), cc_com, cc, mcast, hex(pid), length),
+                                    (datetime.datetime.now(), cc_com, cc,
+                                        mcast, hex(pid), length),
                                     color='red')
                             syslog.syslog(syslog.LOG_ERR, "%s Error expected %s got %s (%s) %s %s" %
                                     (datetime.datetime.now(), cc_com, cc, mcast, hex(pid), length))
-
+                            buf.append( "%s Error expected %s got %s (%s) %s %s" %
+                                    (datetime.datetime.now(), cc_com, cc, mcast, hex(pid), length))
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -99,9 +106,23 @@ class MainHandler(tornado.web.RequestHandler):
         run_time = datetime.datetime.now() - start_time
         packet_time = datetime.datetime.now() - start_time_packet
         bits=((bits_second*1316)*8/packet_time.total_seconds())/1000000
-        self.render('index.html',version=ts_analyzer.__version__,addresses=dict(addresses),hostname=hostname, bits=round(bits,2), run_time=run_time)
+        self.render('index.html',version=ts_analyzer.__version__,addresses=dict(addresses),hostname=hostname,
+                location=location,bits=round(bits,2), run_time=run_time,buf=buf,peers=peers)
 
 
+class LogHandler(tornado.web.RequestHandler):
+    def get(self):
+        from platform import uname
+        hostname = uname()[1]
+        self.render('log.html',buf=buf, hostname=hostname)
+
+
+class LogsHandler(tornado.web.RequestHandler):
+    def get(self):
+        from platform import uname
+        hostname = uname()[1]
+        self.render('logs.html',buf=buf, peers=peers, hostname=hostname )
+        
 class ChannelHandler(tornado.web.RequestHandler):
     def get(self):
         pids_new=pids.copy()
@@ -116,6 +137,17 @@ class ChannelHandler(tornado.web.RequestHandler):
                         pass
             del pids_new[key]
         self.write(pids_new)
+
+class RingBuffer:
+    def __init__(self, size):
+        self.data = [None for i in xrange(size)]
+
+    def append(self, x):
+        self.data.pop(0)
+        self.data.append(x)
+
+    def get(self):
+        return reversed(self.data)
 
 class ChannelOverviewHandler(tornado.web.RequestHandler):
     def get(self):
@@ -147,13 +179,22 @@ class NewChannelHandler(tornado.web.RequestHandler):
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(posted_config)
 
+#class Server(object):
+#    def __init__(self,address)
+#        self.server = pyuv.UDP(loop._loop)
+#        self.server.bind(key)
+#        self.server.set_membership(key[0], pyuv.UV_JOIN_GROUP)
+#        self.server.start_recv(on_read)
+
 if __name__ == "__main__":
 
     application = tornado.web.Application([
         (r"/", MainHandler),
         (r"/channels/overview", ChannelOverviewHandler),
         (r"/channels", ChannelHandler),
-        (r"/channels/new", NewChannelHandler)
+        (r"/channels/new", NewChannelHandler),
+        (r"/logs", LogsHandler),
+        (r"/log", LogHandler)
     ])
 
     parser = argparse.ArgumentParser()
@@ -164,16 +205,22 @@ if __name__ == "__main__":
     os.system(['clear', 'cls'][os.name == 'nt'])
 
     print ("TS_Analyzer version %s (Using PyUV version %s)" % (ts_analyzer.__version__, pyuv.__version__), color='white', background='blue')
-    template_path = os.path.join(os.path.dirname(__file__), "templßates")
+    template_path = os.path.join(os.path.dirname(__file__), "templates")
 
     syslog.syslog("TS_Analyzer version %s (Using PyUV version %s)" % (ts_analyzer.__version__, pyuv.__version__))
 
     pids = {}
 
     location = ''
+    location = 'Vrijhof - 253'
     addresses = {}
-    addresses[("239.192.80.1", 1234)] = 1
-
+    addresses[("239.192.71.3", 1234)] = 1
+    addresses[("239.192.27.1", 1234)] = 1
+    buf = RingBuffer(50)
+  
+    peers = {}
+    peers["iptv2-cam"]=("130.89.175.42",8889)
+    
     start_time_packet='unset'
     bits_second = 1
     start_time=datetime.datetime.now()
@@ -185,18 +232,32 @@ if __name__ == "__main__":
     application.listen(8889)
     loop = tornado.ioloop.IOLoop.instance()
 
-    for address in addresses():
-        print ("In dict: %s"), address
+#    for addr in addresses.keys():
+#        print ("In dict: %s" % (addr))
 
-    server = pyuv.UDP(loop._loop)
-    server.bind(("239.192.71.3", 1234))
-    server.set_membership("239.192.71.3", pyuv.UV_JOIN_GROUP)
-    server.start_recv(on_read)
+    counter=0
+    servers={}
+    for key in addresses:
+        print ('%s corresponds to' % key[0])
 
-    server1 = pyuv.UDP(loop._loop)
-    server1.bind(("239.192.27.1", 1234))
-    server1.set_membership("239.192.27.1", pyuv.UV_JOIN_GROUP)
-    server1.start_recv(on_read)
+        servers[counter] = pyuv.UDP(loop._loop)
+        servers[counter].bind(key)
+        servers[counter].set_membership(key[0], pyuv.UV_JOIN_GROUP)
+        servers[counter].start_recv(on_read)
+        counter = counter + 1
+#    server1 = pyuv.UDP(loop._loop)
+#    server1.bind(("239.192.27.1", 1234))
+#    server1.set_membership("239.192.27.1", pyuv.UV_JOIN_GROUP)
+#    server1.start_recv(on_read)
+#    server = pyuv.UDP(loop._loop)
+#    server.bind(("239.192.71.3", 1234))
+#    server.set_membership("239.192.71.3", pyuv.UV_JOIN_GROUP)
+#    server.start_recv(on_read)
+
+#    server1 = pyuv.UDP(loop._loop)
+#    server1.bind(("239.192.27.1", 1234))
+#    server1.set_membership("239.192.27.1", pyuv.UV_JOIN_GROUP)
+#    server1.start_recv(on_read)
 
 #    server2 = pyuv.UDP(loop._loop)
 #    server2.bind(("239.192.27.2", 1234))

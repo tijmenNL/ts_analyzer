@@ -1,32 +1,8 @@
-              {% extends template_base.html %}
-              {% block title %}TS Analyser{% end %}
-              {% block index %}
-              <div class='page-header'>
-                  <h1>TS analyzer</h1></div>
-          <p>
-          This is the TS analyzer version {{version}} running on {{hostname}} for {{run_time}}, using {{bits}} Mbits/s<br>
-          My location is {{location}}</p>
-          <p>My peers are:</p>
-          <ul>
-              {% for name,values in peers.items() %}
-                <li>{{name}} ({{values}})</li>
-              {% end %}
-          </ul>
-          <p>
-          I am monitoring:
-          </p>
-          <ol>
-              {% for address,values in addresses.items() %}
-                  <li>{{address}}</li>
-              {% end %}
-          </ol>
-          <p>
-              Here is an <a href='channels/overview'>overview of all channels monitored</a>
-          </p>
-          {% end %}
-          {% block log %}
-                    <style>
-        .submenu {
+        {% extends template_base.html %}
+        {% block title %}TS Analyzer - Log {% end %}
+        {% block log %}
+        <style>
+            .submenu {
             line-height: 18px;
             border: 1px solid #ddd;
             -webkit-border-radius: 4px;
@@ -34,7 +10,6 @@
             border-radius: 4px;
             position: relative;
             margin: 15px 0;
-            margin-bottom: 0;
             padding: 39px 15px 10px;
         }
         .submenu h2 {
@@ -52,7 +27,6 @@
             -moz-border-radius: 4px 0 4px 0;
             border-radius: 4px 0 4px 0;
         }
-        
         .highlight {
     	    margin-bottom: -10px;
     	    background-color: #f7f7f9;
@@ -65,8 +39,8 @@
     	
         
         </style>
-         <div class='submenu' >
-        <h2>TS analyzer - Log</h2>
+         <div class='submenu ' >
+        <h2><span class="label label-info" style='line-height:18px'>{{hostname}}</span> TS analyzer - Log</h2>
         
         <div class='highlight' style="overflow:scroll; height:300px; font-family :courier new ; font-size:10pt">
               {% for values in buf.get() %}
@@ -83,4 +57,5 @@
           </div></div>
 
               {% end %}
+
 

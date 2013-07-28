@@ -1,30 +1,13 @@
               {% extends template_base.html %}
               {% block title %}TS Analyser{% end %}
+              {%block container %}
+<div class="container-fluid">
+{% end %}
+
               {% block index %}
-              <div class='page-header'>
-                  <h1>TS analyzer</h1></div>
-          <p>
-          This is the TS analyzer version {{version}} running on {{hostname}} for {{run_time}}, using {{bits}} Mbits/s<br>
-          My location is {{location}}</p>
-          <p>My peers are:</p>
-          <ul>
-              {% for name,values in peers.items() %}
-                <li>{{name}} ({{values}})</li>
-              {% end %}
-          </ul>
-          <p>
-          I am monitoring:
-          </p>
-          <ol>
-              {% for address,values in addresses.items() %}
-                  <li>{{address}}</li>
-              {% end %}
-          </ol>
-          <p>
-              Here is an <a href='channels/overview'>overview of all channels monitored</a>
-          </p>
           {% end %}
           {% block log %}
+
                     <style>
         .submenu {
             line-height: 18px;
@@ -65,8 +48,9 @@
     	
         
         </style>
-         <div class='submenu' >
-        <h2>TS analyzer - Log</h2>
+            <div class="row-fluid">
+         <div class='submenu col-lg-6' >
+        <h2><span class="label label-info" style='line-height:18px'>{{hostname}}</span> TS analyzer - Log</h2>
         
         <div class='highlight' style="overflow:scroll; height:300px; font-family :courier new ; font-size:10pt">
               {% for values in buf.get() %}
@@ -81,6 +65,10 @@
                 {% end %}
               {% end %}
           </div></div>
+          <div class='col-lg-6'>
+	  {% for name,values in peers.items() %}
+	    <iframe seamless src="{{values[0]}}:{{values[1]}}/log.html"></iframe></div></div>
+	  {% end %}
 
               {% end %}
 
