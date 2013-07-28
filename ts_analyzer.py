@@ -69,7 +69,7 @@ def on_read(handle, ip_port, flags, data, error):
             adaptation_field = ((header3 & 0x30) >> 4)
             have_payload = bool(header3 & 0x10)
             cc = header3 & 0x0F
-            length=len(data)
+            length = len(data)
 
             # We have sync:
             if sync == 0x47:
@@ -86,10 +86,11 @@ def on_read(handle, ip_port, flags, data, error):
                         if cc is not cc_com:
                             pids[mcast][pid]['error'] = pids[mcast][pid]['error']+1
                             print ("%s Error expected %s got %s (%s) %s %s" %
-                                    (datetime.datetime.now(),cc_com,cc,mcast,hex(pid),length),
+                                    (datetime.datetime.now(), cc_com, cc, mcast, hex(pid), length),
                                     color='red')
                             syslog.syslog(syslog.LOG_ERR, "%s Error expected %s got %s (%s) %s %s" %
-                                    (datetime.datetime.now(),cc_com,cc,mcast,hex(pid),length))
+                                    (datetime.datetime.now(), cc_com, cc, mcast, hex(pid), length))
+
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -133,12 +134,13 @@ class ChannelOverviewHandler(tornado.web.RequestHandler):
         #pp = pprint.PrettyPrinter(indent=4)
         #pp.pprint(pids)
 
+
 class NewChannelHandler(tornado.web.RequestHandler):
     def post(self):
         # Debug
         #self.write(tornado.escape.json_encode(self.request.arguments["post"]))
         try:
-            posted_config=tornado.escape.json_decode(self.request.body)
+            posted_config = tornado.escape.json_decode(self.request.body)
         except:
             print("Invalid JSON")
 
@@ -155,19 +157,20 @@ if __name__ == "__main__":
     ])
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--version', action='version', version="ts_analyzer %s" % ts_analyzer.__version__ )
+    parser.add_argument('--version', action='version', version="ts_analyzer %s" % ts_analyzer.__version__)
 
     args = parser.parse_args()
 
-    os.system( [ 'clear', 'cls' ][ os.name == 'nt' ] )
+    os.system(['clear', 'cls'][os.name == 'nt'])
 
-    print ("TS_Analyzer version %s (Using PyUV version %s)" % (ts_analyzer.__version__,pyuv.__version__),color='white',background='blue')
-    template_path=os.path.join(os.path.dirname(__file__), "templates")
+    print ("TS_Analyzer version %s (Using PyUV version %s)" % (ts_analyzer.__version__, pyuv.__version__), color='white', background='blue')
+    template_path = os.path.join(os.path.dirname(__file__), "templßates")
 
-    syslog.syslog("TS_Analyzer version %s (Using PyUV version %s)" % (ts_analyzer.__version__,pyuv.__version__))
+    syslog.syslog("TS_Analyzer version %s (Using PyUV version %s)" % (ts_analyzer.__version__, pyuv.__version__))
 
     pids = {}
 
+    location = ''
     addresses = {}
     addresses[("239.192.80.1", 1234)] = 1
 
@@ -181,6 +184,9 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, handle_signal)
     application.listen(8889)
     loop = tornado.ioloop.IOLoop.instance()
+
+    for address in addresses():
+        print ("In dict: %s"), address
 
     server = pyuv.UDP(loop._loop)
     server.bind(("239.192.71.3", 1234))
@@ -221,7 +227,6 @@ if __name__ == "__main__":
 #    server7.bind(("239.192.25.2", 1234))
 #    server7.set_membership("239.192.25.2", pyuv.UV_JOIN_GROUP)
 #    server7.start_recv(on_read)
-
 
     loop.start()
     tornado.ioloop.IOLoop.instance().close()
