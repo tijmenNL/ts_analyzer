@@ -21,6 +21,7 @@ import pyuv
 import struct
 import pprint
 from sys import stdout
+import syslog
 import datetime
 import ts_analyzer
 
@@ -65,11 +66,11 @@ def on_read(handle, ip_port, flags, data, error):
             pid = header2 | ((header1 & 0x1F) << 8)
             scrambling = ((header3 & 0xC0) >> 6)
             have_adaptation_field = bool(header3 & 0x20)
-            adaptation_field = ((header3 & 0x30) >> 4) 
+            adaptation_field = ((header3 & 0x30) >> 4)
             have_payload = bool(header3 & 0x10)
             cc = header3 & 0x0F
             length=len(data)
-            
+
             # We have sync:
             if sync == 0x47:
                 if mcast not in pids:
@@ -80,15 +81,17 @@ def on_read(handle, ip_port, flags, data, error):
                 else:
                     pids[mcast][pid]['packets']= pids[mcast][pid]['packets']+1
                     if adaptation_field != 2:
-                        cc_com=(pids[mcast][pid]['cc']+1) % 16
-                        pids[mcast][pid]['cc']=cc
+                        cc_com = (pids[mcast][pid]['cc']+1) % 16
+                        pids[mcast][pid]['cc'] = cc
                         if cc is not cc_com:
                             pids[mcast][pid]['error'] = pids[mcast][pid]['error']+1
                             print ("%s Error expected %s got %s (%s) %s %s" %
                                     (datetime.datetime.now(),cc_com,cc,mcast,hex(pid),length),
                                     color='red')
+                            syslog.syslog(syslog.LOG_ERR, "%s Error expected %s got %s (%s) %s %s" %
+                                    (datetime.datetime.now(),cc_com,cc,mcast,hex(pid),length))
 
-class MainHandler(tornado.web.RequestHandler):
+class MainHandler(tornado.web.RequestHandler):ß
     def get(self):
         from platform import uname
         hostname = uname()[1]
@@ -143,35 +146,35 @@ class NewChannelHandler(tornado.web.RequestHandler):
         pp.pprint(posted_config)
 
 if __name__ == "__main__":
-    
+
     application = tornado.web.Application([
         (r"/", MainHandler),
         (r"/channels/overview", ChannelOverviewHandler),
         (r"/channels", ChannelHandler),
         (r"/channels/new", NewChannelHandler)
     ])
-    
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', action='version', version="ts_analyzer %s" % ts_analyzer.__version__ )
 
     args = parser.parse_args()
-    
+
     os.system( [ 'clear', 'cls' ][ os.name == 'nt' ] )
-    
+
     print ("TS_Analyzer version %s (Using PyUV version %s)" % (ts_analyzer.__version__,pyuv.__version__),color='white',background='blue')
     template_path=os.path.join(os.path.dirname(__file__), "templates")
 
     pids = {}
-    
+
     addresses = {}
     addresses[("239.192.80.1", 1234)] = 1
-    
+
     start_time_packet='unset'
     bits_second = 1
     start_time=datetime.datetime.now()
     #pp2 = pprint.PrettyPrinter(indent=4)
     #pp2.pprint(addresses)
-    
+
     signal.signal(signal.SIGINT, handle_signal)
     signal.signal(signal.SIGTERM, handle_signal)
     application.listen(8889)
@@ -186,17 +189,17 @@ if __name__ == "__main__":
     server1.bind(("239.192.27.1", 1234))
     server1.set_membership("239.192.27.1", pyuv.UV_JOIN_GROUP)
     server1.start_recv(on_read)
-    
+
 #    server2 = pyuv.UDP(loop._loop)
 #    server2.bind(("239.192.27.2", 1234))
 #    server2.set_membership("239.192.27.2", pyuv.UV_JOIN_GROUP)
 #    server2.start_recv(on_read)
-    
+
 #    server3 = pyuv.UDP(loop._loop)
 #    server3.bind(("239.192.27.1", 1234))
 #    server3.set_membership("239.192.27.1", pyuv.UV_JOIN_GROUP)
 #    server3.start_recv(on_read)
-    
+
 #    server5 = pyuv.UDP(loop._loop)
 #    server5.bind(("239.192.49.2", 1234))
 #    server5.set_membership("239.192.49.2", pyuv.UV_JOIN_GROUP)
