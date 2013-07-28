@@ -166,6 +166,8 @@ if __name__ == "__main__":
 
     syslog.syslog("TS_Analyzer version %s (Using PyUV version %s)" % (ts_analyzer.__version__,pyuv.__version__))
 
+    pids = {}
+
     addresses = {}
     addresses[("239.192.80.1", 1234)] = 1
 
