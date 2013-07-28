@@ -3,8 +3,12 @@
 from __future__ import print_function
 from colorprint import *
 
-import tornado_pyuv
-tornado_pyuv.install()
+#import tornado_pyuv
+#tornado_pyuv.install()
+
+from tornado.ioloop import IOLoop
+from tornado_pyuv import UVLoop
+IOLoop.configure(UVLoop)
 
 import signal
 
@@ -30,7 +34,7 @@ if sys.version_info >= (3, 0):
 else:
     LINESEP = os.linesep
 
-def on_read(handle, ip_port, data, error):
+def on_read(handle, ip_port, flags, data, error):
     global bits_second, start_time_packet
     if error is not None:
         print (error,color='red')
