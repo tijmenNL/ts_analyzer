@@ -1,5 +1,4 @@
         {% extends template_base.html %}
-        {% block title %}TS Analyzer - Log {% end %}
         {% block log %}
         <style>
             .submenu {
@@ -36,12 +35,12 @@
     	    padding: 5px;
     	    margin: 0 -15px -10px;
     	}
-    	
-        
+
+
         </style>
          <div class='submenu ' >
         <h2><span class="label label-info" style='line-height:18px'>{{hostname}}</span> TS analyzer - Log</h2>
-        
+
         <div class='highlight' style="overflow:scroll; height:300px; font-family :courier new ; font-size:10pt">
               {% for values in buf.get() %}
                 {% if values != None %}

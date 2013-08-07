@@ -1,5 +1,5 @@
               {% extends template_base.html %}
-              {% block title %}TS Analyser{% end %}
+              {% block title %}TS Analyser - Log Compare{% end %}
               {%block container %}
 <div class="container-fluid">
 {% end %}
@@ -35,7 +35,7 @@
             -moz-border-radius: 4px 0 4px 0;
             border-radius: 4px 0 4px 0;
         }
-        
+
         .highlight {
     	    margin-bottom: -10px;
     	    background-color: #f7f7f9;
@@ -45,13 +45,13 @@
     	    padding: 5px;
     	    margin: 0 -15px -10px;
     	}
-    	
-        
+
+
         </style>
             <div class="row-fluid">
          <div class='submenu col-lg-6' >
         <h2><span class="label label-info" style='line-height:18px'>{{hostname}}</span> TS analyzer - Log</h2>
-        
+
         <div class='highlight' style="overflow:scroll; height:300px; font-family :courier new ; font-size:10pt">
               {% for values in buf.get() %}
                 {% if values != None %}
@@ -67,7 +67,7 @@
           </div></div>
           <div class='col-lg-6' style='height:356px;'>
 	  {% for name,values in peers.items() %}
-	    <iframe seamless width="100%" height="356px" src="http://{{values[0]}}:{{values[1]}}/log"></iframe></div></div>
+	    <iframe seamless width="100%" height="356px" src="http://{{values[0]}}:{{values[1]}}/selflog"></iframe></div></div>
 	  {% end %}
 
               {% end %}

@@ -281,6 +281,11 @@ class LogHandler(tornado.web.RequestHandler):
         hostname = uname()[1]
         self.render('log.html',buf=buf, hostname=hostname)
 
+class SelfLogHandler(tornado.web.RequestHandler):
+    def get(self):
+        from platform import uname
+        hostname = uname()[1]
+        self.render('self_log.html',buf=buf, hostname=hostname)
 
 class LogsHandler(tornado.web.RequestHandler):
     def get(self):
@@ -359,7 +364,8 @@ if __name__ == "__main__":
         (r"/channels", ChannelHandler),
         (r"/channels/new", NewChannelHandler),
         (r"/logs", LogsHandler),
-        (r"/log", LogHandler)
+        (r"/log", LogHandler),
+        (r"/selflog", SelfLogHandler)
     ])
 
     parser = argparse.ArgumentParser()
