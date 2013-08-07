@@ -1,12 +1,10 @@
-<html>
-  <head>
-    <title>{% block title %}Default title{% end %}</title>
-  </head>
-  <body>
+              {% extends template_base.html %}
+              {% block title %}TS Analyser - Channels{% end %}
+              {% block index %}
       {% for address,values in pids_new.items() %}
         {% set s=0 %}
         <div style="float:left"><ul>
-        {% block address %}
+
           <li>{{ escape(address) }}<br>
           {% if isinstance(values, dict) %}
                 {% set total=0 %}
@@ -20,7 +18,7 @@
                     {% end %}
                     {% set pct=(stats['packets']/total)*100 %}
                     <li>
-                    <!--<div style='width:100%; 
+                    <!--<div style='width:100%;
 background: -moz-linear-gradient(left, #1c8e22 0%, #1c8e22 {{pct-10}}%, #ffffff {{pct}}%); /* FF3.6+ */
 background: -webkit-gradient(linear, left top, right top, color-stop(0%,#1c8e22), color-stop({{pct-10}}%,#1c8e22), color-stop({{pct}}%,#ffffff)); /* Chrome,Safari4+ */
 background: -webkit-linear-gradient(left, #1c8e22 0%,#1c8e22 {{pct-10}}%,#ffffff {{pct}}%); /* Chrome10+,Safari5.1+ */
@@ -29,12 +27,19 @@ background: -ms-linear-gradient(left, #1c8e22 0%,#1c8e22 68%,#ffffff 68%); /* IE
 background: linear-gradient(to right, #1c8e22 0%,#1c8e22 68%,#ffffff 68%); /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1c8e22', endColorstr='#ffffff',GradientType=1 ); /* IE6-9 */
 border-radius: 2px;'>--><div>
-                        PID: {{hex(pids)}} Packets [188 bytes] : {{stats['packets']}} Discontinuities: {{stats['error']}}</div></li>
+                        PID: {{hex(pids)}} Packets [188 bytes] : {{stats['packets']}} Discontinuities: {{stats['error']}} Type: {{stats['type']}}
+                        {% if stats['extra'] %}
+                        <ul>
+                          <li>PID:{{stats['extra']['table_id']}}</li>
+                          <li>Transport stream ID: {{stats['extra']['transportstream_id']}}</li>
+                          <li>SID: {{stats['extra']['program']}}</li>
+                          <li>PMT: {{int(stats['extra']['pmt'],16)}} ({{stats['extra']['pmt']}})</li>
+                      </ul>
+                        {% end %}</div></li>
                 {% end %}
                 </ul>
-          {% end %}
         {% end %}
         </ul></div>
       {% end %}
-  </body>
-</html>
+    {% end %}
+

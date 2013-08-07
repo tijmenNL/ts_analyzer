@@ -65,9 +65,9 @@
                 {% end %}
               {% end %}
           </div></div>
-          <div class='col-lg-6'>
+          <div class='col-lg-6' style='height:356px;'>
 	  {% for name,values in peers.items() %}
-	    <iframe seamless src="http://{{values[0]}}:{{values[1]}}/log"></iframe></div></div>
+	    <iframe seamless width="100%" height="356px" src="http://{{values[0]}}:{{values[1]}}/log"></iframe></div></div>
 	  {% end %}
 
               {% end %}
