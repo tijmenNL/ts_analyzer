@@ -226,10 +226,10 @@ def on_read(handle, ip_port, flags, data, error):
                     if pid == 0:
                         pids[mcast][pid]['type'] = "PAT"
                         print (" [PAT] ",end='')
-                        buf.append("%s Found new PID in stream %s (src=%s)(PID: %s [%s]) [PAT]" %
+                        buf.append("%s NEW PID: %s (src=%s)(PID: %s [%s]) [PAT]" %
                                 (datetime.datetime.now(),mcast,ip,hex(pid),pid))
 
-                    buf.append("%s Found new PID in stream %s (src=%s) (PID: %s [%s])" %
+                    buf.append("%s NEW PID: %s (src=%s) (PID: %s [%s])" %
                             (datetime.datetime.now(),mcast,ip,hex(pid),pid))
                     print ("(PID: ",end='')
                     print ("%s"% hex(pid), color='green',end='')
@@ -247,7 +247,7 @@ def on_read(handle, ip_port, flags, data, error):
                                     color='red')
                             syslog.syslog(syslog.LOG_ERR, "%s Error expected %s got %s (%s) %s %s" %
                                     (datetime.datetime.now(), cc_com, cc, mcast, hex(pid), length))
-                            buf.append( "%s Error expected %s got %s (%s) %s %s" %
+                            buf.append( "%s ERR: expected %s got %s (%s) %s %s" %
                                     (datetime.datetime.now(), cc_com, cc, mcast, hex(pid), length))
 
                 if pid == 0x00:

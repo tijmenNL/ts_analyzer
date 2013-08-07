@@ -55,9 +55,9 @@
         <div class='highlight' style="overflow:scroll; height:300px; font-family :courier new ; font-size:10pt">
               {% for values in buf.get() %}
                 {% if values != None %}
-                {% if  "Error" in values %}
+                {% if  "ERR" in values %}
                 <span class="text-danger">{{values}}</span><br>
-                {% elif "Found new" in values %}
+                {% elif "NEW" in values %}
                 <span class="text-success">{{values}}</span><br>
                 {% else %}
                     {{values}}<br>
